@@ -17,8 +17,6 @@ using System.Windows.Shapes;
 using Tanvas.TanvasTouch.Resources;
 using Tanvas.TanvasTouch.WpfUtilities;
 using Path = System.IO.Path;
-using System.Drawing.Imaging;
-using System.Windows.Forms;
 
 namespace TanvasProject
 {
@@ -51,20 +49,29 @@ namespace TanvasProject
         {
             try
             {
-                //Creating a new Bitmap object
-                Bitmap captureBitmap = new Bitmap(1024, 768, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                //Bitmap captureBitmap = new Bitmap(int width, int height, PixelFormat);
-                //Creating a Rectangle object which will
-                //capture our Current Screen
-                System.Drawing.Rectangle captureRectangle = Screen.AllScreens[0].Bounds;
-                //Creating a New Graphics Object
-                Graphics captureGraphics = Graphics.FromImage(captureBitmap);
-                //Copying Image from The Screen
-                captureGraphics.CopyFromScreen(captureRectangle.Left, captureRectangle.Top, 0, 0, captureRectangle.Size);
-                //Saving the Image File (I am here Saving it in My E drive).
-                captureBitmap.Save(@"C:\Users\lakan\source\repos\TanvasProject\TanvasProject\Assets\Capture.jpg", ImageFormat.Png);
-                //Displaying the Successfull Result
-                System.Windows.MessageBox.Show("Screen Captured");
+                // Get the Current instance of the window
+                Window window = System.Windows.Application.Current.Windows.OfType<Window>().Single(x => x.IsActive);
+
+                // Render the current control (window) with specified parameters of: Width, Height, horizontal DPI
+                // of the bitmap, vertical DPI of the bitmap, The format of the bitmap
+                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)window.ActualWidth-16,
+                                                                               (int)window.ActualHeight-39,
+                                                                               96, 96, 
+                                                                               PixelFormats.Pbgra32);
+                renderTargetBitmap.Render(window);
+
+                // Encoding the rendered bitmap
+                PngBitmapEncoder png = new PngBitmapEncoder();
+                png.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+
+                // Save the image
+                string screenshotPath = @"..\..\Assets\appScreenshot.png";
+                using (Stream stm = File.Create(screenshotPath))
+                {
+                    png.Save(stm);
+                }
+
+                ConvertToGrayscale(screenshotPath);
             }
             catch (Exception ex)
             {
@@ -120,12 +127,13 @@ namespace TanvasProject
             this.Content = convertButton;*/
         }
 
-        private void ConvertButton_Click(object sender, RoutedEventArgs e)
+        // unused atm
+        /*private void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
             // Call the ConvertToGrayscale function with the input path of your choice
-            var inputPath = new Uri("pack://application:,,/Assets/thingy2.png").ToString();
-            string outputPath = ConvertToGrayscale(inputPath);
+            //var inputPath = new Uri("pack://application:,,/Assets/thingy2.png").ToString();
+            string outputPath = ConvertToGrayscale(@"..\..\Assets\appScreenshot.png");
             Console.WriteLine("Grayscale image saved to: " + outputPath);
-        }
+        }*/
     }
 }
