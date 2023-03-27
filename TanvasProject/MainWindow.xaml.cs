@@ -16,7 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Tanvas.TanvasTouch.Resources;
 using Tanvas.TanvasTouch.WpfUtilities;
-using Internal;
+using Path = System.IO.Path;
 
 namespace TanvasProject
 {
@@ -29,8 +29,7 @@ namespace TanvasProject
         {
             InitializeComponent();
             Tanvas.TanvasTouch.API.Initialize();
-            // ^ uncomment this and add Loaded="Window_Loaded" to the last row of the Window element in MainWindow.xaml
-            // currently throws error seemingly because the output needs to be read by the Tanvas tablet
+            // remember to run Tanvas Engine before running the app, otherwise the initialization won't work
         }
 
         TanvasTouchViewTracker viewTracker;
@@ -43,6 +42,9 @@ namespace TanvasProject
             }
         }
 
+        /**
+         * Converts an image to grayscale and saves it to the same location in a new file
+         */
         public static string ConvertToGrayscale(string inputPath)
         {
             // Load the input image
@@ -72,13 +74,14 @@ namespace TanvasProject
 
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // creating a haptic sprite
             viewTracker = new TanvasTouchViewTracker(this);
 
-            var uri = new Uri("pack://application:,,/Assets/thingy.png");
+            var uri = new Uri("pack://application:,,/Assets/thingy2.png");
             var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
 
             myView.AddSprite(mySprite);
-            Console.WriteLine("uwu");
+
 
             // Add a button to the main window
             Button convertButton = new Button();
@@ -90,7 +93,7 @@ namespace TanvasProject
         private void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
             // Call the ConvertToGrayscale function with the input path of your choice
-            //string inputPath = @"C:\path\to\your\input\file.png";
+            var inputPath = new Uri("pack://application:,,/Assets/thingy2.png").ToString();
             string outputPath = ConvertToGrayscale(inputPath);
             Console.WriteLine("Grayscale image saved to: " + outputPath);
         }

@@ -9,7 +9,7 @@
         Loaded="Window_Loaded"
         >
     <Grid>
-        <Image Source="Assets/thingy.png" Width="1280" Height="800" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <Image Source="Assets/thingy2.png" Width="1280" Height="800" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
     </Grid>
 
 </Window>
