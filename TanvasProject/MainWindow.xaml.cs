@@ -17,6 +17,8 @@ using System.Windows.Shapes;
 using Tanvas.TanvasTouch.Resources;
 using Tanvas.TanvasTouch.WpfUtilities;
 using Path = System.IO.Path;
+using System.Drawing.Imaging;
+using System.Windows.Forms;
 
 namespace TanvasProject
 {
@@ -39,6 +41,34 @@ namespace TanvasProject
             get
             {
                 return viewTracker.View;
+            }
+        }
+
+        /**
+         * Captures a screenshot of the screen and saves it in the assets directory
+         */
+        private void takeScreenshot(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                //Creating a new Bitmap object
+                Bitmap captureBitmap = new Bitmap(1024, 768, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                //Bitmap captureBitmap = new Bitmap(int width, int height, PixelFormat);
+                //Creating a Rectangle object which will
+                //capture our Current Screen
+                System.Drawing.Rectangle captureRectangle = Screen.AllScreens[0].Bounds;
+                //Creating a New Graphics Object
+                Graphics captureGraphics = Graphics.FromImage(captureBitmap);
+                //Copying Image from The Screen
+                captureGraphics.CopyFromScreen(captureRectangle.Left, captureRectangle.Top, 0, 0, captureRectangle.Size);
+                //Saving the Image File (I am here Saving it in My E drive).
+                captureBitmap.Save(@"C:\Users\lakan\source\repos\TanvasProject\TanvasProject\Assets\Capture.jpg", ImageFormat.Png);
+                //Displaying the Successfull Result
+                System.Windows.MessageBox.Show("Screen Captured");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
             }
         }
 
@@ -84,10 +114,10 @@ namespace TanvasProject
 
 
             // Add a button to the main window
-            Button convertButton = new Button();
+            /*Button convertButton = new Button();
             convertButton.Content = "Convert to Grayscale";
             convertButton.Click += ConvertButton_Click;
-            this.Content = convertButton;
+            this.Content = convertButton;*/
         }
 
         private void ConvertButton_Click(object sender, RoutedEventArgs e)
