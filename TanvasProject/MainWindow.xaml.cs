@@ -17,6 +17,10 @@ using System.Windows.Shapes;
 using Tanvas.TanvasTouch.Resources;
 using Tanvas.TanvasTouch.WpfUtilities;
 using Path = System.IO.Path;
+using Point = System.Windows.Point;
+using VisualButton = System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using Button = System.Windows.Controls.Button;
+using Brush = System.Drawing.Brush;
 
 namespace TanvasProject
 {
@@ -49,8 +53,7 @@ namespace TanvasProject
         {
             try
             {
-                // Get the Current instance of the window
-                Window window = System.Windows.Application.Current.Windows.OfType<Window>().Single(x => x.IsActive);
+                Window window = Application.Current.Windows.OfType<Window>().Single(x => x.IsActive);
 
                 // Render the current control (window) with specified parameters of: Width, Height, horizontal DPI
                 // of the bitmap, vertical DPI of the bitmap, The format of the bitmap
@@ -77,6 +80,63 @@ namespace TanvasProject
             {
                 System.Windows.MessageBox.Show(ex.Message);
             }
+        }
+
+        /**
+         * Button click event handler to create a haptic map from the current screen
+         */
+        private void createHapticImage(object sender, RoutedEventArgs e)
+        {
+            drawHapticImage(mainGrid);
+        }
+
+        /**
+         * Draws the haptics image for the given grid and saves it in the assets directory
+         */
+        private void drawHapticImage(Grid grid)
+        {
+            try
+            {
+                Window window = Application.Current.Windows.OfType<Window>().Single(w => w.IsActive);
+
+                Bitmap hapticsSpriteImg = new Bitmap((int)window.ActualWidth - 16, (int)window.ActualHeight - 39);
+                Graphics hapticsMap = Graphics.FromImage(hapticsSpriteImg);
+                Brush brush = new SolidBrush(System.Drawing.Color.Black);
+
+                // Adding a white bg to the haptics map
+                hapticsMap.Clear(System.Drawing.Color.White);
+
+                // Draw each Button from the given grid into the haptics sprite image
+                grid.Children.OfType<Button>().ToList().ForEach(
+                    btn => drawButtonHaptics(btn, hapticsMap, brush
+                    ));
+
+                // Save the sprite img
+                string spriteImgPath = @"..\..\Assets\appHapticSprite.png";
+                hapticsSpriteImg.Save(spriteImgPath, System.Drawing.Imaging.ImageFormat.Png);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+        }
+
+        /**
+         * Draws a single rectangular Button's footprint into the given graphic
+         */
+        private Graphics drawButtonHaptics(Button btn, Graphics graphic, Brush brush)
+        {
+            btn = this.FindName(btn.Name) as Button;
+
+            float width = (float)btn.RenderSize.Width;
+            float height = (float)btn.RenderSize.Height;
+            Point coords = btn.TransformToAncestor(this).Transform(new Point());
+            float x = (float)coords.X;
+            float y = (float)coords.Y;
+
+            graphic.FillRectangle(brush, x, y, width, height);
+
+            return graphic;
         }
 
         /**
