@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TanvasProject"
         mc:Ignorable="d"
-        Title="TanvasProject" Width="1280" Height="800"
+        Title="TanvasProject" Width="1278" Height="727"
         Loaded="Window_Loaded"
         >
     <Grid Name="mainGrid">
-        <Image Source="Assets/thingy2.png" Width="1280" Height="800" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-        <Button x:Name="screenshotbutton" Width="150" Height="50" Click="takeScreenshot">Click to screenshot</Button>
-        <Button x:Name="spritebutton" Width="100" Height="100" Margin="417,234,763,450" Click="createHapticImage">Create sprite</Button>
+        <Image Source="Assets\thingy2.png" Width="1278" Height="727" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <Button x:Name="screenshotbutton" Width="150" Height="50" Click="takeScreenshot" Margin="718,235,410,426">Click to screenshot</Button>
+        <Button x:Name="spritebutton" Width="100" Height="100" Click="createHapticImage">Create sprite</Button>
     </Grid>
 
 </Window>

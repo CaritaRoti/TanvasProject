@@ -174,8 +174,17 @@ namespace TanvasProject
             // creating a haptic sprite
             viewTracker = new TanvasTouchViewTracker(this);
 
-            var uri = new Uri("pack://application:,,/Assets/thingy2.png");
+            drawHapticImage(mainGrid);
+            var uri = new Uri("pack://application:,,/Assets/appHapticSprite.png");
+
+            //var uri = new Uri("pack://application:,,/Assets/thingy2.png");
             var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
+
+            // To combat random sprite offset, setting coordinates
+            mySprite.X = 350;
+            //mySprite.Y = -250;
+
+
 
             myView.AddSprite(mySprite);
 
