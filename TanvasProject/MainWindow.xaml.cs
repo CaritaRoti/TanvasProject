@@ -111,6 +111,10 @@ namespace TanvasProject
                     btn => drawButtonHaptics(btn, hapticsMap, brush
                     ));
 
+                // Draw each Button from the given grid into the haptics sprite image
+                grid.Children.OfType<Slider>().ToList().ForEach(
+                    sldr => drawSliderHaptics(hapticsMap, sldr));
+
                 // Save the sprite img
                 string spriteImgPath = @"..\..\Assets\appHapticSprite.png";
                 hapticsSpriteImg.Save(spriteImgPath, System.Drawing.Imaging.ImageFormat.Png);
@@ -138,6 +142,60 @@ namespace TanvasProject
 
             return graphic;
         }
+
+
+        /**
+         * Draws a slider footprint into the given graphic with space in the middle.
+         */
+
+        private Graphics drawSliderHaptics(Slider sldr, Graphics existingImage)
+        {
+            if (existingImage is null)
+            {
+                throw new ArgumentNullException(nameof(existingImage));
+            }
+
+            if (sldr is null)
+            {
+                throw new ArgumentNullException(nameof(sldr));
+            }
+            // Get the dimensions of the HTML element
+            var width = (float)sldr.ClientRectangle.Width;
+            var height = (float)sldr.ClientRectangle.Height;
+
+            // Calculate the size of the boxes
+            var boxWidth = width / 2.0f;
+            var boxHeight = height / 5.0f;
+            var gapSize = 5.0f;
+
+            // Draw the boxes on the existing image
+            using (var graphics = Graphics.FromImage(existingImage))
+            {
+                // Draw five boxes
+                for (int i = 0; i < 5; i++)
+                {
+                    // Calculate the position of the box
+                    var x = boxWidth / 2.0f * i;
+                    var y = boxHeight * i;
+
+                    // Draw the box
+                    var brush = new SolidBrush(Color.Black);
+                    var pen = new Pen(brush, 1.0f);
+
+                    graphics.DrawRectangle(pen, x, y, boxWidth, boxHeight);
+
+                    // Draw a gap between boxes
+                    if (i < 4)
+                    {
+                        graphics.FillRectangle(new SolidBrush(Color.White), x + boxWidth - gapSize, y, gapSize, boxHeight);
+                    }
+                }
+            }
+
+            return existingImage;
+        }
+
+
 
         /**
          * Converts an image to grayscale and saves it to the same location in a new file
@@ -194,6 +252,11 @@ namespace TanvasProject
             convertButton.Content = "Convert to Grayscale";
             convertButton.Click += ConvertButton_Click;
             this.Content = convertButton;*/
+
+            // Set the minimum, maximum, and initial value of the slider
+            mySlider.Minimum = 0;
+            mySlider.Maximum = 100;
+            mySlider.Value = 50;
         }
 
         // unused atm
