@@ -21,6 +21,7 @@ using Point = System.Windows.Point;
 using VisualButton = System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using Button = System.Windows.Controls.Button;
 using Brush = System.Drawing.Brush;
+using static System.Windows.Forms.AxHost;
 
 namespace TanvasProject
 {
@@ -108,16 +109,17 @@ namespace TanvasProject
 
                 // Draw each Button from the given grid into the haptics sprite image
                 grid.Children.OfType<Button>().ToList().ForEach(
-                    btn => drawButtonHaptics(btn, hapticsMap, brush
-                    ));
+                    btn => drawButtonHaptics(btn, hapticsMap, brush));
 
                 // Draw each Button from the given grid into the haptics sprite image
                 grid.Children.OfType<Slider>().ToList().ForEach(
-                    sldr => drawSliderHaptics(hapticsMap, sldr));
+                    sldr => drawSliderHaptics(sldr, hapticsMap, brush, 5, 30, 1.1f));
 
                 // Save the sprite img
                 string spriteImgPath = @"..\..\Assets\appHapticSprite.png";
                 hapticsSpriteImg.Save(spriteImgPath, System.Drawing.Imaging.ImageFormat.Png);
+
+
             }
             catch (Exception ex)
             {
@@ -130,8 +132,6 @@ namespace TanvasProject
          */
         private Graphics drawButtonHaptics(Button btn, Graphics graphic, Brush brush)
         {
-            btn = this.FindName(btn.Name) as Button;
-
             float width = (float)btn.RenderSize.Width;
             float height = (float)btn.RenderSize.Height;
             Point coords = btn.TransformToAncestor(this).Transform(new Point());
@@ -147,8 +147,7 @@ namespace TanvasProject
         /**
          * Draws a slider footprint into the given graphic with space in the middle.
          */
-
-        private Graphics drawSliderHaptics(Slider sldr, Graphics existingImage)
+        private Graphics drawSliderHaptics(Slider sldr, Graphics existingImage, Brush brush, float minboxWidth, float gapSize, float boxIncrement)
         {
             if (existingImage is null)
             {
@@ -160,41 +159,34 @@ namespace TanvasProject
                 throw new ArgumentNullException(nameof(sldr));
             }
             // Get the dimensions of the HTML element
-            var width = (float)sldr.ClientRectangle.Width;
-            var height = (float)sldr.ClientRectangle.Height;
+            var width = (float)sldr.RenderSize.Width;
+            var height = (float)sldr.RenderSize.Height;
+            Point coords = sldr.TransformToAncestor(this).Transform(new Point());
+            float sliderX = (float)coords.X;
+            float sliderY = (float)coords.Y;
 
-            // Calculate the size of the boxes
-            var boxWidth = width / 2.0f;
-            var boxHeight = height / 5.0f;
-            var gapSize = 5.0f;
+            float boxWidth = minboxWidth;
+            float startX = sliderX;
+            float prevX = startX;
+            float sliderEndX = sliderX + width;
 
-            // Draw the boxes on the existing image
-            using (var graphics = Graphics.FromImage(existingImage))
+            //existingImage.FillRectangle(new SolidBrush(System.Drawing.Color.Yellow), sliderX, sliderY, width, height);
+
+            // drawing rectangles until out of space
+            while (startX < sliderEndX)
             {
-                // Draw five boxes
-                for (int i = 0; i < 5; i++)
-                {
-                    // Calculate the position of the box
-                    var x = boxWidth / 2.0f * i;
-                    var y = boxHeight * i;
-
-                    // Draw the box
-                    var brush = new SolidBrush(Color.Black);
-                    var pen = new Pen(brush, 1.0f);
-
-                    graphics.DrawRectangle(pen, x, y, boxWidth, boxHeight);
-
-                    // Draw a gap between boxes
-                    if (i < 4)
-                    {
-                        graphics.FillRectangle(new SolidBrush(Color.White), x + boxWidth - gapSize, y, gapSize, boxHeight);
-                    }
-                }
+                prevX = startX;
+                existingImage.FillRectangle(brush, startX, sliderY, boxWidth, height);
+                boxWidth = (float) (boxWidth * boxIncrement);
+                startX = startX + boxWidth + gapSize;
             }
+
+            // redrawing the last rectangle so it reaches the right end of the slider
+            existingImage.FillRectangle(brush, prevX, sliderY, sliderEndX-prevX, height);
+
 
             return existingImage;
         }
-
 
 
         /**
@@ -254,9 +246,9 @@ namespace TanvasProject
             this.Content = convertButton;*/
 
             // Set the minimum, maximum, and initial value of the slider
-            mySlider.Minimum = 0;
+            /*mySlider.Minimum = 0;
             mySlider.Maximum = 100;
-            mySlider.Value = 50;
+            mySlider.Value = 50;*/
         }
 
         // unused atm
