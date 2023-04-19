@@ -1,27 +1,17 @@
 ﻿using System;
 using System.Drawing;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Tanvas.TanvasTouch.Resources;
 using Tanvas.TanvasTouch.WpfUtilities;
 using Path = System.IO.Path;
 using Point = System.Windows.Point;
-using VisualButton = System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using Button = System.Windows.Controls.Button;
 using Brush = System.Drawing.Brush;
-using static System.Windows.Forms.AxHost;
 
 namespace TanvasProject
 {
@@ -232,32 +222,7 @@ namespace TanvasProject
 
             // To combat random sprite offset, setting coordinates
             mySprite.X = 350;
-            //mySprite.Y = -250;
-
-
-
             myView.AddSprite(mySprite);
-
-
-            // Add a button to the main window
-            /*Button convertButton = new Button();
-            convertButton.Content = "Convert to Grayscale";
-            convertButton.Click += ConvertButton_Click;
-            this.Content = convertButton;*/
-
-            // Set the minimum, maximum, and initial value of the slider
-            /*mySlider.Minimum = 0;
-            mySlider.Maximum = 100;
-            mySlider.Value = 50;*/
         }
-
-        // unused atm
-        /*private void ConvertButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Call the ConvertToGrayscale function with the input path of your choice
-            //var inputPath = new Uri("pack://application:,,/Assets/thingy2.png").ToString();
-            string outputPath = ConvertToGrayscale(@"..\..\Assets\appScreenshot.png");
-            Console.WriteLine("Grayscale image saved to: " + outputPath);
-        }*/
     }
 }
