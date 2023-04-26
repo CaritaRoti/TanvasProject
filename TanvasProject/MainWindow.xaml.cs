@@ -73,12 +73,34 @@ namespace TanvasProject
             }
         }
 
+        private void deleteAllSprites(object sender, RoutedEventArgs e)
+        {
+            myView.RemoveAllSprites();
+        }
         /**
          * Button click event handler to create a haptic map from the current screen
          */
         private void createHapticImage(object sender, RoutedEventArgs e)
         {
             drawHapticImage(mainGrid);
+            Window window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            var uri = new Uri("pack://application:,,/Assets/appHapticSprite.png");
+
+            var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
+
+            // To combat random sprite offset, setting coordinates
+            mySprite.X = 350;
+            myView.RemoveAllSprites();
+            Console.WriteLine(myView.GetAllSprites());
+            myView.AddSprite(mySprite);
+        }
+
+        private void updateHapticImage(RoutedEventArgs e)
+        {
+            Window window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            Window_Loaded(window, e);
+
+
         }
 
         /**
@@ -107,7 +129,11 @@ namespace TanvasProject
 
                 // Save the sprite img
                 string spriteImgPath = @"..\..\Assets\appHapticSprite.png";
-                hapticsSpriteImg.Save(spriteImgPath, System.Drawing.Imaging.ImageFormat.Png);
+
+                using (var stream = new FileStream(spriteImgPath, FileMode.Create))
+                {
+                    hapticsSpriteImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                }
 
 
             }
@@ -214,10 +240,10 @@ namespace TanvasProject
             // creating a haptic sprite
             viewTracker = new TanvasTouchViewTracker(this);
 
-            drawHapticImage(mainGrid);
+            // for some reason whether or not this line is here does not matter, the sprite
+            // always uses the image that already exists in the file directory when the program boots up
             var uri = new Uri("pack://application:,,/Assets/appHapticSprite.png");
 
-            //var uri = new Uri("pack://application:,,/Assets/thingy2.png");
             var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
 
             // To combat random sprite offset, setting coordinates

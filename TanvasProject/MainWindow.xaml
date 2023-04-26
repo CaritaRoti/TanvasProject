@@ -9,9 +9,10 @@
         Loaded="Window_Loaded"
         >
     <Grid Name="mainGrid">
-        <Image Source="Assets\thingy2.png" Width="1278" Height="727" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <!-- <Image Source="Assets\thingy2.png" Width="1278" Height="727" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left"/> -->
         <Button x:Name="screenshotbutton" Width="150" Height="50" Click="takeScreenshot" Margin="718,235,410,426">Click to screenshot</Button>
         <Button x:Name="spritebutton" Width="100" Height="100" Click="createHapticImage">Create sprite</Button>
+        <Button x:Name="deletSprite" Width="100" Click="deleteAllSprites" Margin="399,260,779,386">Delete all sprites</Button>
         <Slider x:Name="mySlider" Minimum="0" Maximum="100" Value="50" Margin="212,125,349,565" />
     </Grid>
 
