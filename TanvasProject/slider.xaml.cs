@@ -13,31 +13,20 @@ using Point = System.Windows.Point;
 using Button = System.Windows.Controls.Button;
 using Brush = System.Drawing.Brush;
 using System.Windows.Navigation;
-using System.Security.Policy;
-using System.Drawing.Imaging;
 
 namespace TanvasProject
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for slider.xaml
     /// </summary>
-    /// 
-    public partial class MainWindow : Window
+    public partial class slider : Page
     {
-
-        int button_status = 0;
-
-        public MainWindow()
+        public slider()
         {
             InitializeComponent();
-            Tanvas.TanvasTouch.API.Initialize(); // remember to run Tanvas Engine before running the app, otherwise the initialization won't work
-            WindowState = WindowState.Maximized; // Maximise the screen on start
-
-            //Declaring the elements on the screen globally
-            slider.Visibility = Visibility.Collapsed;
-            vup.Visibility = Visibility.Collapsed;
-            vdown.Visibility = Visibility.Collapsed;
+            Tanvas.TanvasTouch.API.Initialize();
         }
+
 
         TanvasTouchViewTracker viewTracker;
 
@@ -49,9 +38,13 @@ namespace TanvasProject
             }
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
         /**
-         * Captures a screenshot of the screen and saves it in the assets directory
-         */
+                 * Captures a screenshot of the screen and saves it in the assets directory
+                 */
         private void takeScreenshot(object sender, RoutedEventArgs e)
         {
             try
@@ -60,9 +53,9 @@ namespace TanvasProject
 
                 // Render the current control (window) with specified parameters of: Width, Height, horizontal DPI
                 // of the bitmap, vertical DPI of the bitmap, The format of the bitmap
-                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)window.ActualWidth-16,
-                                                                               (int)window.ActualHeight-39,
-                                                                               96, 96, 
+                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)window.ActualWidth - 16,
+                                                                               (int)window.ActualHeight - 39,
+                                                                               96, 96,
                                                                                PixelFormats.Pbgra32);
                 renderTargetBitmap.Render(window);
 
@@ -75,7 +68,6 @@ namespace TanvasProject
                 using (Stream stm = File.Create(screenshotPath))
                 {
                     png.Save(stm);
-                    stm.Close();
                 }
 
                 ConvertToGrayscale(screenshotPath);
@@ -97,25 +89,15 @@ namespace TanvasProject
         {
             drawHapticImage(mainGrid);
             Window window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            var uri = new Uri("C:\\Users\\immer\\Documents\\GitHub\\TanvasProject\\TanvasProject\\Assets\\appHapticSprite.png");
 
-            using (
-                var stream = new FileStream(@"..\..\Assets\appHapticSprite.png", FileMode.Open))
-            {
-                var uri = new Uri(stream.Name);
-                stream.Close(); //added close to make sure the resourses are released. Still the issue is there
-                var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
-                
-                // To combat random sprite offset, setting coordinates
-                mySprite.X = 350;
-                myView.RemoveAllSprites();
-                Console.WriteLine(myView.GetAllSprites());
-                myView.AddSprite(mySprite);
-                
-            }
+            var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
 
-           
-
-            
+            // To combat random sprite offset, setting coordinates
+            mySprite.X = 350;
+            myView.RemoveAllSprites();
+            Console.WriteLine(myView.GetAllSprites());
+            myView.AddSprite(mySprite);
         }
 
         private void updateHapticImage(RoutedEventArgs e)
@@ -151,13 +133,11 @@ namespace TanvasProject
                     sldr => drawSliderHaptics(sldr, hapticsMap, brush, 5, 30, 1.1f));
 
                 // Save the sprite img
-                string spriteImgPath = @"..\..\Assets\appHapticSprite.png";
+                string spriteImgPath = @"C:\Users\immer\Documents\GitHub\TanvasProject\TanvasProject\Assets\appHapticSprite.png";
 
                 using (var stream = new FileStream(spriteImgPath, FileMode.Create))
                 {
                     hapticsSpriteImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-
-                    stream.Dispose(); //added close to make sure the resourses are released. Still the issue is there
                 }
 
 
@@ -218,12 +198,12 @@ namespace TanvasProject
             {
                 prevX = startX;
                 existingImage.FillRectangle(brush, startX, sliderY, boxWidth, height);
-                boxWidth = (float) (boxWidth * boxIncrement);
+                boxWidth = (float)(boxWidth * boxIncrement);
                 startX = startX + boxWidth + gapSize;
             }
 
             // redrawing the last rectangle so it reaches the right end of the slider
-            existingImage.FillRectangle(brush, prevX, sliderY, sliderEndX-prevX, height);
+            existingImage.FillRectangle(brush, prevX, sliderY, sliderEndX - prevX, height);
 
 
             return existingImage;
@@ -262,78 +242,20 @@ namespace TanvasProject
 
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // creating a haptic sprite
-            viewTracker = new TanvasTouchViewTracker(this);
+            //// creating a haptic sprite
+            //viewTracker = new TanvasTouchViewTracker(Window);
 
-            // for some reason whether or not this line is here does not matter, the sprite
-            // always uses the image that already exists in the file directory when the program boots up
-            
-            //creating the file incase if does not exist
-
-            //check if the file exist
-            if (!File.Exists(@"..\..\Assets\appHapticSprite.png"))
-            {
-                //create a new bitmap with white background
-                var bmp = new Bitmap(1200, 800);
-                using(var g= Graphics.FromImage(bmp))
-                {
-                    g.Clear(System.Drawing.Color.White);
-                }
-
-                //save the bitmap as png
-                bmp.Save(@"..\..\Assets\appHapticSprite.png", ImageFormat.Png);
-
-                //dispose the bitmp object
-                bmp.Dispose();
-            }
-
-            using (var stream = new FileStream(@"..\..\Assets\appHapticSprite.png", FileMode.Open))
-            {
-                
-                var uri = new Uri(stream.Name);
-                stream.Close();
-                var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
-                // To combat random sprite offset, setting coordinates
-                mySprite.X = 350;
-                myView.AddSprite(mySprite);
-                
-            }
-        }
+            //// for some reason whether or not this line is here does not matter, the sprite
+            //// always uses the image that already exists in the file directory when the program boots up
+            ////var uri = new Uri("pack://application:,,/Assets/appHapticSprite.png");
+            //var uri = new Uri("C:\\Users\\immer\\Documents\\GitHub\\TanvasProject\\TanvasProject\\Assets\\appHapticSprite.png");
 
 
-        //follwoing buttons are to control the element layout of the application. Make them hide or visible
-        private void Button_Click_Slider(object sender, RoutedEventArgs e)
-        {
-            button_status = 1;
-        }
+            //var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
 
-        private void Button_Click_Button(object sender, RoutedEventArgs e)
-        {
-            button_status = 2;
-        }
-
-        private void volume_control_Click(object sender, RoutedEventArgs e)
-        {
-            if (button_status == 1)
-            {
-                vup.Visibility = Visibility.Collapsed;
-                vdown.Visibility = Visibility.Collapsed;
-                slider.Visibility = Visibility.Visible;
-                button_status = 0;
-            }
-            else if (button_status == 2)
-            {
-                slider.Visibility = Visibility.Collapsed;
-                vup.Visibility = Visibility.Visible;
-                vdown.Visibility = Visibility.Visible;
-                button_status = 0;
-            }
-            else
-            {
-                slider.Visibility = Visibility.Collapsed;
-                vup.Visibility = Visibility.Collapsed;
-                vdown.Visibility = Visibility.Collapsed;
-            }
+            //// To combat random sprite offset, setting coordinates
+            //mySprite.X = 350;
+            //myView.AddSprite(mySprite);
         }
     }
 }
