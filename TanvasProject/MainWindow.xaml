@@ -91,18 +91,17 @@
 
     <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="13*"/>
-            <ColumnDefinition Width="37*"/>
+            <ColumnDefinition Width="155*"/>
+            <ColumnDefinition Width="261*"/>
+            <ColumnDefinition Width="619*"/>
+            <ColumnDefinition Width="165*"/>
         </Grid.ColumnDefinitions>
-        <Grid.Background>
-            <ImageBrush ImageSource="/Frame 1.png"/>
-        </Grid.Background>
         <!-- <Image Source="Assets\thingy2.png" Width="1278" Height="727" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left"/> -->
-        <Button x:Name="screenshotbutton" Click="takeScreenshot" Margin="630,0,87,0" Height="157" VerticalAlignment="Center" Width="171" Grid.Column="1">Click to screenshot</Button>
-        <Button x:Name="spritebutton" Click="createHapticImage" RenderTransformOrigin="0.464,1.015" Margin="261,0,456,0" Height="157" VerticalAlignment="Center" Width="171" Grid.Column="1">Create sprite</Button>
-        <Button x:Name="deletSprite" Click="deleteAllSprites" Margin="234,0,794,0" Height="157" VerticalAlignment="Center" Width="171" Grid.ColumnSpan="2">Delete all sprites</Button>
-        <Slider x:Name="slider"  Style="{StaticResource Horizontal_Slider}" VerticalAlignment="Bottom"  Minimum="0" Maximum="100" Value="50" Margin="90,0,137,61" Grid.Column="1"/>
-        <Image x:Name="volume" Margin="271,0,0,61" Height="98" VerticalAlignment="Bottom" Source="/volume-down.png" HorizontalAlignment="Left" Width="100" OpacityMask="Black" Grid.ColumnSpan="2"/>
+        <Button x:Name="screenshotbutton" Click="takeScreenshot" Margin="0,33,0,0" Height="152" VerticalAlignment="Top">Click to screenshot</Button>
+        <Button x:Name="spritebutton" Click="createHapticImage" RenderTransformOrigin="0.464,1.015" Margin="0,227,0,0" Height="144" VerticalAlignment="Top">Create sprite</Button>
+        <Button x:Name="deletSprite" Click="deleteAllSprites" Margin="0,418,0,0" Height="135" VerticalAlignment="Top">Delete all sprites</Button>
+        <Slider x:Name="slider"  Style="{StaticResource Horizontal_Slider}" VerticalAlignment="Bottom"  Minimum="0" Maximum="100" Value="50" Margin="90,0,137,61" Grid.Column="1" Height="100" Grid.ColumnSpan="3"/>
+        <Image x:Name="volume" Margin="10,0,0,61" Height="98" VerticalAlignment="Bottom" Source="/volume-down.png" HorizontalAlignment="Left" Width="100" OpacityMask="Black" Grid.Column="1"/>
 
         <!--<Slider x:Name="mySlider" Minimum="0" Maximum="100" Value="50" Margin="280,205,308,463">
 			<Slider.LayoutTransform>
@@ -111,11 +110,11 @@
         </Slider>-->
 
 
-        <Button x:Name="slider_control" Content="Slider" HorizontalAlignment="Left" Height="106" Margin="271,141,0,0" VerticalAlignment="Top" Width="235" Click="Button_Click_Slider" FontFamily="Arial Black" FontSize="36" Background="#FF146AC0" Grid.ColumnSpan="2"/>
-        <Button x:Name="button_control"  Content="Button" HorizontalAlignment="Left" Height="106" Margin="516,141,0,0" VerticalAlignment="Top" Width="235" Click="Button_Click_Button" FontFamily="Arial Black" FontSize="36" Background="#FF146AC0" Grid.Column="1"/>
-        <Button x:Name="volume_control" Content="Volume" HorizontalAlignment="Left" Height="159" Margin="0,625,0,0" VerticalAlignment="Top" Width="155" Click="volume_control_Click"/>
-        <Button x:Name="vup" Content="-" HorizontalAlignment="Left" Height="156" Margin="90,590,0,0" VerticalAlignment="Top" Width="198" FontSize="72" Grid.Column="1"/>
-        <Button x:Name="vdown" Content="+" HorizontalAlignment="Left" Height="156" Margin="553,585,0,0" VerticalAlignment="Top" Width="198" FontSize="72" Grid.Column="1"/>
+        <Button x:Name="slider_control" Content="Slider" Height="106" Margin="7,141,0,0" VerticalAlignment="Top" Click="Button_Click_Slider" FontFamily="Arial Black" FontSize="36" Background="#FF146AC0" Grid.Column="2" HorizontalAlignment="Left" Width="235"/>
+        <Button x:Name="button_control"  Content="Button" Height="106" Margin="0,141,23,0" VerticalAlignment="Top" Click="Button_Click_Button" FontFamily="Arial Black" FontSize="36" Background="#FF146AC0" Grid.Column="2" HorizontalAlignment="Right" Width="235"/>
+        <Button x:Name="volume_control" Content="Volume" Margin="0,625,0,3" Click="volume_control_Click"/>
+        <Button x:Name="vup" Content="-" Height="156" Margin="34,596,0,0" VerticalAlignment="Top" FontSize="72" Grid.Column="2" HorizontalAlignment="Left" Width="198" BorderThickness="4,4,4,4" ClipToBounds="True" SnapsToDevicePixels="True"/>
+        <Button x:Name="vdown" Content="+" Height="156" Margin="0,596,41,0" VerticalAlignment="Top" FontSize="72" Grid.Column="2" HorizontalAlignment="Right" Width="198" BorderThickness="4,4,4,4" ClipToBounds="True" SnapsToDevicePixels="True"/>
     </Grid>
 
 
