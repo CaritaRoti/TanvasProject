@@ -12,8 +12,6 @@ using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Button = System.Windows.Controls.Button;
 using Brush = System.Drawing.Brush;
-using System.Windows.Navigation;
-using System.Security.Policy;
 using System.Drawing.Imaging;
 
 namespace TanvasProject
@@ -37,6 +35,8 @@ namespace TanvasProject
             slider.Visibility = Visibility.Collapsed;
             vup.Visibility = Visibility.Collapsed;
             vdown.Visibility = Visibility.Collapsed;
+            volume.Visibility = Visibility.Collapsed;
+            volume_b.Visibility = Visibility.Collapsed;
         }
 
         TanvasTouchViewTracker viewTracker;
@@ -69,9 +69,9 @@ namespace TanvasProject
                 // Encoding the rendered bitmap
                 PngBitmapEncoder png = new PngBitmapEncoder();
                 png.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
-
+                
                 // Save the image
-                string screenshotPath = @"..\..\Assets\appScreenshot.png";
+                string screenshotPath = @"..\Assets\appScreenshot.png";
                 using (Stream stm = File.Create(screenshotPath))
                 {
                     png.Save(stm);
@@ -98,13 +98,11 @@ namespace TanvasProject
             drawHapticImage(mainGrid);
             Window window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
 
-            using (
-                var stream = new FileStream(@"..\..\Assets\appHapticSprite.png", FileMode.Open))
+            using (var stream = new FileStream(@"..\Assets\appHapticSprite.png", FileMode.Open))
             {
                 var uri = new Uri(stream.Name);
                 stream.Close(); //added close to make sure the resourses are released. Still the issue is there
-                var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
-                
+                var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);                
                 // To combat random sprite offset, setting coordinates
                 mySprite.X = 350;
                 myView.RemoveAllSprites();
@@ -118,13 +116,13 @@ namespace TanvasProject
             
         }
 
-        private void updateHapticImage(RoutedEventArgs e)
-        {
-            Window window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-            Window_Loaded(window, e);
+        //private void updateHapticImage(RoutedEventArgs e)
+        //{
+        //    Window window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+        //    Window_Loaded(window, e);
 
 
-        }
+        //}
 
         /**
          * Draws the haptics image for the given grid and saves it in the assets directory
@@ -151,20 +149,22 @@ namespace TanvasProject
                     sldr => drawSliderHaptics(sldr, hapticsMap, brush, 5, 30, 1.1f));
 
                 // Save the sprite img
-                string spriteImgPath = @"..\..\Assets\appHapticSprite.png";
+                string spriteImgPath = @"..\Assets\appHapticSprite.png";
 
-                using (var stream = new FileStream(spriteImgPath, FileMode.Create))
+                if (File.Exists(spriteImgPath))
                 {
-                    hapticsSpriteImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-
-                    stream.Dispose(); //added close to make sure the resourses are released. Still the issue is there
+                    using (var stream = new FileStream(spriteImgPath, FileMode.Create))
+                    {
+                        hapticsSpriteImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                        stream.Close(); //added close to make sure the resourses are released. Still the issue is there
+                    }
                 }
-
-
+                
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.Message);
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -180,6 +180,7 @@ namespace TanvasProject
             float y = (float)coords.Y;
 
             graphic.FillRectangle(brush, x, y, width, height);
+            //graphic.Dispose();
 
             return graphic;
         }
@@ -224,6 +225,7 @@ namespace TanvasProject
 
             // redrawing the last rectangle so it reaches the right end of the slider
             existingImage.FillRectangle(brush, prevX, sliderY, sliderEndX-prevX, height);
+            existingImage.Dispose();
 
 
             return existingImage;
@@ -267,36 +269,39 @@ namespace TanvasProject
 
             // for some reason whether or not this line is here does not matter, the sprite
             // always uses the image that already exists in the file directory when the program boots up
-            
-            //creating the file incase if does not exist
+
+            //creating the file
+            //File path
+            string path = @"..\Assets\appHapticSprite.png";
 
             //check if the file exist
-            if (!File.Exists(@"..\..\Assets\appHapticSprite.png"))
+            if (File.Exists(path))
             {
-                //create a new bitmap with white background
-                var bmp = new Bitmap(1200, 800);
-                using(var g= Graphics.FromImage(bmp))
-                {
-                    g.Clear(System.Drawing.Color.White);
-                }
-
-                //save the bitmap as png
-                bmp.Save(@"..\..\Assets\appHapticSprite.png", ImageFormat.Png);
-
-                //dispose the bitmp object
-                bmp.Dispose();
+                File.Delete(path);                
+            }
+            //create a new bitmap with white background
+            var bmp = new Bitmap(1200, 800);
+            using(var g= Graphics.FromImage(bmp))
+            {
+                g.Clear(System.Drawing.Color.White);
+                g.Dispose();
             }
 
-            using (var stream = new FileStream(@"..\..\Assets\appHapticSprite.png", FileMode.Open))
-            {
-                
+            //save the bitmap as png
+            bmp.Save(path, ImageFormat.Png);
+
+            //dispose the bitmp object
+            bmp.Dispose();
+            
+
+            using (var stream = new FileStream(path, FileMode.Open))
+            {                
                 var uri = new Uri(stream.Name);
                 stream.Close();
                 var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
                 // To combat random sprite offset, setting coordinates
                 mySprite.X = 350;
                 myView.AddSprite(mySprite);
-                
             }
         }
 
@@ -319,6 +324,8 @@ namespace TanvasProject
                 vup.Visibility = Visibility.Collapsed;
                 vdown.Visibility = Visibility.Collapsed;
                 slider.Visibility = Visibility.Visible;
+                volume.Visibility = Visibility.Visible;
+                volume_b.Visibility = Visibility.Collapsed;
                 button_status = 0;
             }
             else if (button_status == 2)
@@ -326,6 +333,8 @@ namespace TanvasProject
                 slider.Visibility = Visibility.Collapsed;
                 vup.Visibility = Visibility.Visible;
                 vdown.Visibility = Visibility.Visible;
+                volume.Visibility = Visibility.Collapsed;
+                volume_b.Visibility = Visibility.Visible;
                 button_status = 0;
             }
             else
@@ -333,6 +342,8 @@ namespace TanvasProject
                 slider.Visibility = Visibility.Collapsed;
                 vup.Visibility = Visibility.Collapsed;
                 vdown.Visibility = Visibility.Collapsed;
+                volume.Visibility = Visibility.Collapsed;
+                volume_b.Visibility = Visibility.Collapsed;
             }
         }
     }
