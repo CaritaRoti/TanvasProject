@@ -13,6 +13,7 @@ using Point = System.Windows.Point;
 using Button = System.Windows.Controls.Button;
 using Brush = System.Drawing.Brush;
 using System.Drawing.Imaging;
+using System.Windows.Shapes;
 
 namespace TanvasProject
 {
@@ -98,31 +99,28 @@ namespace TanvasProject
             drawHapticImage(mainGrid);
             Window window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
 
-            using (var stream = new FileStream(@"..\Assets\appHapticSprite.png", FileMode.Open))
-            {
-                var uri = new Uri(stream.Name);
-                stream.Close(); //added close to make sure the resourses are released. Still the issue is there
-                var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);                
-                // To combat random sprite offset, setting coordinates
-                mySprite.X = 350;
-                myView.RemoveAllSprites();
-                Console.WriteLine(myView.GetAllSprites());
-                myView.AddSprite(mySprite);
+            try
+            { 
+                using (var stream = new FileStream(@"..\Assets\appHapticSprite.png", FileMode.Open))
+                    {
+                        var uri = new Uri(stream.Name);
+                        stream.Close(); //added close to make sure the resourses are released. Still the issue is there
+                        var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);                
+                        // To combat random sprite offset, setting coordinates
+                        mySprite.X = -450;
+                        myView.RemoveAllSprites();
+                        Console.WriteLine(myView.GetAllSprites());
+                        myView.AddSprite(mySprite);
                 
+                    }
             }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
 
-           
-
+            }
             
         }
-
-        //private void updateHapticImage(RoutedEventArgs e)
-        //{
-        //    Window window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-        //    Window_Loaded(window, e);
-
-
-        //}
 
         /**
          * Draws the haptics image for the given grid and saves it in the assets directory
@@ -146,19 +144,39 @@ namespace TanvasProject
 
                 // Draw each Button from the given grid into the haptics sprite image
                 grid.Children.OfType<Slider>().ToList().ForEach(
-                    sldr => drawSliderHaptics(sldr, hapticsMap, brush, 5, 30, 1.1f));
+                    sldr => drawSliderHaptics(sldr, hapticsMap, brush, 5, 10, 1.1f));
 
                 // Save the sprite img
                 string spriteImgPath = @"..\Assets\appHapticSprite.png";
-
-                if (File.Exists(spriteImgPath))
+                int retries = 3;
+                while (retries > 0) 
                 {
-                    using (var stream = new FileStream(spriteImgPath, FileMode.Create))
+                    try 
                     {
-                        hapticsSpriteImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                        stream.Close(); //added close to make sure the resourses are released. Still the issue is there
+                         if (File.Exists(spriteImgPath))
+                            {            
+                            using (var stream = new FileStream(spriteImgPath, FileMode.Create))
+                            {                                
+                                hapticsSpriteImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                stream.Close(); //added close to make sure the resourses are released. Still the issue is there
+                            }
+                            }
+                        break;
                     }
+                    catch 
+                    {
+                        retries--;
+                        if (retries == 0)
+                        {
+                            throw;
+                        }
+                        System.Threading.Thread.Sleep(1000);
+                    }
+                    
+               
                 }
+
+               
                 
             }
             catch (Exception ex)
@@ -271,6 +289,7 @@ namespace TanvasProject
             // always uses the image that already exists in the file directory when the program boots up
 
             //creating the file
+
             //File path
             string path = @"..\Assets\appHapticSprite.png";
 
@@ -293,31 +312,41 @@ namespace TanvasProject
             //dispose the bitmp object
             bmp.Dispose();
             
-
+            //creating the sprite path
             using (var stream = new FileStream(path, FileMode.Open))
             {                
                 var uri = new Uri(stream.Name);
                 stream.Close();
                 var mySprite = PNGToTanvasTouch.CreateSpriteFromPNG(uri);
                 // To combat random sprite offset, setting coordinates
-                mySprite.X = 350;
+                mySprite.X = -450;
                 myView.AddSprite(mySprite);
             }
         }
 
 
         //follwoing buttons are to control the element layout of the application. Make them hide or visible
-        private void Button_Click_Slider(object sender, RoutedEventArgs e)
+
+        //to enable the slider and the control button, change the colour of the other controler
+        private void Button_Click_Slider(object sender, RoutedEventArgs e) 
         {
             button_status = 1;
+            slider_control.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(100, 80, 218, 124));
+            button_control.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(100, 20, 106, 192));
+            volume_control_Click(sender, e);
         }
 
-        private void Button_Click_Button(object sender, RoutedEventArgs e)
+        //to enable the v control buttons and the control button, change the colour of the other controler
+        private void Button_Click_Button(object sender, RoutedEventArgs e) 
         {
             button_status = 2;
+            button_control.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(100, 80, 218, 124));
+            slider_control.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(100, 20, 106, 192));
+            volume_control_Click(sender, e);
         }
 
-        private void volume_control_Click(object sender, RoutedEventArgs e)
+        // show/hide the controllers
+        private void volume_control_Click(object sender, RoutedEventArgs e) 
         {
             if (button_status == 1)
             {
@@ -328,6 +357,7 @@ namespace TanvasProject
                 volume_b.Visibility = Visibility.Collapsed;
                 button_status = 0;
             }
+
             else if (button_status == 2)
             {
                 slider.Visibility = Visibility.Collapsed;
@@ -337,6 +367,7 @@ namespace TanvasProject
                 volume_b.Visibility = Visibility.Visible;
                 button_status = 0;
             }
+
             else
             {
                 slider.Visibility = Visibility.Collapsed;
@@ -345,6 +376,26 @@ namespace TanvasProject
                 volume.Visibility = Visibility.Collapsed;
                 volume_b.Visibility = Visibility.Collapsed;
             }
+        }
+
+        //enable/disable configurations buttons during the test to avoid accidental clicks
+        private void check_Checked(object sender, RoutedEventArgs e) 
+        {
+            screenshotbutton.IsEnabled = false;
+            spritebutton.IsEnabled = false;
+            deletSprite.IsEnabled = false;
+            slider_control.IsEnabled = false;
+            button_control.IsEnabled = false;
+        }
+
+        //enable/disable configurations buttons during the test to avoid accidental clicks
+        private void check_Unchecked(object sender, RoutedEventArgs e) 
+        {
+            screenshotbutton.IsEnabled = true;
+            spritebutton.IsEnabled = true;
+            deletSprite.IsEnabled = true;
+            slider_control.IsEnabled = true;
+            button_control.IsEnabled = true;
         }
     }
 }

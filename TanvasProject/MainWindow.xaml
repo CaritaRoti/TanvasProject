@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TanvasProject"
         mc:Ignorable="d"
-        Title="TanvasProject" Width="1200" Height="800"
+        Title="TanvasProject" Width="1024" Height="768"
         Loaded="Window_Loaded"
         >
     <Window.Resources>
@@ -42,7 +42,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
-                        <Ellipse Height="50" Width="50" Fill="#FFFCFF00"></Ellipse>
+                        <Ellipse Height="75" Width="75" Fill="#FFFCFF00"></Ellipse>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -110,12 +110,13 @@
         </Slider>-->
 
 
-        <Button x:Name="slider_control" Content="Slider" Height="106" Margin="7,141,0,0" VerticalAlignment="Top" Click="Button_Click_Slider" FontFamily="Arial Black" FontSize="36" Background="#FF146AC0" Grid.Column="2" HorizontalAlignment="Left" Width="235"/>
-        <Button x:Name="button_control"  Content="Button" Height="106" Margin="0,141,23,0" VerticalAlignment="Top" Click="Button_Click_Button" FontFamily="Arial Black" FontSize="36" Background="#FF146AC0" Grid.Column="2" HorizontalAlignment="Right" Width="235"/>
+        <Button x:Name="slider_control" Content="Control 1" Height="106" Margin="7,141,0,0" VerticalAlignment="Top" Click="Button_Click_Slider" FontFamily="Arial Black" FontSize="36" Background="#FF146AC0" Grid.Column="2" HorizontalAlignment="Left" Width="235"/>
+        <Button x:Name="button_control"  Content="Control 2" Height="106" Margin="0,141,23,0" VerticalAlignment="Top" Click="Button_Click_Button" FontFamily="Arial Black" FontSize="36" Background="#FF146AC0" Grid.Column="2" HorizontalAlignment="Right" Width="235"/>
         <Button x:Name="volume_control" Content="Volume" Margin="0,625,0,3" Click="volume_control_Click" Background="#FFCEA4A4" BorderThickness="2,2,2,2"/>
         <Button x:Name="vup" Content="-" Height="156" Margin="34,596,0,0" VerticalAlignment="Top" FontSize="72" Grid.Column="2" HorizontalAlignment="Left" Width="198" BorderThickness="4,4,4,4" ClipToBounds="True" SnapsToDevicePixels="True" Background="#FFFABDBD"/>
         <Button x:Name="vdown" Content="+" Height="156" Margin="0,596,41,0" VerticalAlignment="Top" FontSize="72" Grid.Column="2" HorizontalAlignment="Right" Width="198" BorderThickness="4,4,4,4" ClipToBounds="True" SnapsToDevicePixels="True" Background="#FFBBF1CC"/>
         <Image x:Name="volume_b" Margin="260,625,259,0" Height="98" VerticalAlignment="Top" Source="/volume-down.png" OpacityMask="Black" Grid.Column="2"/>
+        <CheckBox x:Name="check" Grid.Column="3" Content="Start test" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top" Checked="check_Checked" Unchecked="check_Unchecked"/>
     </Grid>
 
 
